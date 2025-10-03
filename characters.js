@@ -1,14 +1,9 @@
-//const {ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ButtonStyle, SelectMenuOptionBuilder, EmbedBuilder} = require('discord.js');
+const {ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ButtonStyle, SelectMenuOptionBuilder, EmbedBuilder} = require('discord.js');
 fs = require('fs');
 
 
 let emptyBox = String.fromCharCode(parseInt('2610', 16));
 let xBox = String.fromCharCode(parseInt('2612', 16));
-/*let mEmoji = String.fromCharCode(parseInt('1F1F2', 16));
-let starEmoji = String.fromCharCode(parseInt('2B50', 16));
-let listEmoji = String.fromCharCode(parseInt('1f4dc', 16));
-let toolsEmoji = String.fromCharCode(parseInt('1F6E0', 16));
-let upEmoji = String.fromCharCode(parseInt('23EB', 16));*/
 
 const playbooks = ['Aware', 'Fae', 'Hunter', 'Immortal', 'Imp', 'Spectre', 'Sworn', 'Tainted', 'Vamp', 'Veteran', 'Wizard', 'Wolf'];
 
@@ -37,28 +32,58 @@ class Character
         this.night = sheetFields[nightCoordinates[0]][nightCoordinates[1]];
         this.power = sheetFields[powerCoordinates[0]][powerCoordinates[1]];
         this.wild = sheetFields[wildCoordinates[0]][wildCoordinates[1]];
+        
+        this.improvementsChecked = Object.keys(manifest).filter(name => name.startsWith("improvement") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).map(x => (x === "TRUE") ? xBox : emptyBox);
+        this.improvementsText = Object.keys(manifest).filter(name => name.startsWith("improvement") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
 
+        this.advancedChecked = Object.keys(manifest).filter(name => name.startsWith("advanced") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).map(x => (x === "TRUE") ? xBox : emptyBox);
+        this.advancedText = Object.keys(manifest).filter(name => name.startsWith("advanced") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
+
+        this.corruptionChecked = Object.keys(manifest).filter(name => name.startsWith("corruptionImprovement") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).map(x => (x === "TRUE") ? xBox : emptyBox);
+        this.corruptionText = Object.keys(manifest).filter(name => name.startsWith("corruptionImprovement") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
 
         
-        
-
-
-        /*this.harm = Object.keys(this.fields).filter(field => field.startsWith('harm')).length;
-        this.luck = Object.keys(this.fields).filter(field => field.startsWith('luck')).length;
-        this.xp = Object.keys(this.fields).filter(field => field.startsWith('xp')).length;
-        this.charm = this.fields['charm'];
-        this.cool = this.fields['cool'];
-        this.sharp = this.fields['sharp'];
-        this.tough = this.fields['tough'];
-        this.weird = this.fields['weird'];
-        [this.improvements, this.advanced] = this.PopulateImprovements();
-        this.inventory = this.Inventory();
-        this.playbook = '';
-        this.playbookMessage = null;*/
     }
     Playbook()
     {
         return ''
+    }
+    FormatImprovements()
+    {
+        let returnString = "";
+        for(let impIndex = 0; impIndex < this.improvementsChecked.length; impIndex++)
+        {
+            returnString += `${this.improvementsChecked[impIndex]} ${this.improvementsText[impIndex]}\n\n`;
+        }
+        return returnString;
+    }
+    FormatAdvanced()
+    {
+        let returnString = "";
+        for(let advIndex = 0; advIndex < this.advancedChecked.length; advIndex++)
+        {
+            returnString += `${this.advancedChecked[advIndex]} ${this.advancedText[advIndex]}\n\n`;
+        }
+        return returnString;
+    }
+    FormatCorruption()
+    {
+        let returnString = "";
+        for(let corruptionIndex = 0; corruptionIndex < this.corruptionChecked.length; corruptionIndex++)
+        {
+            returnString += `${this.corruptionChecked[corruptionIndex]} ${this.corruptionText[corruptionIndex]}\n\n`;
+        }
+        return returnString;
+    }
+    FormatMoves()
+    {
+        let returnString = "";
+        for(let moveIndex = 0; moveIndex < this.moveNames.length; moveIndex++)
+        {
+            returnString += this.moveNames[moveIndex]
+            returnString += `\n${this.moveTexts[moveIndex]}\n\n`
+        }
+        return returnString;
     }
     toString()
     {
@@ -69,186 +94,45 @@ class Character
             returnString += this.moveNames[moveIndex]
             returnString += `\n${this.moveTexts[moveIndex]}\n\n`
         }
+        returnString += "\n---\nIMPROVEMENTS\n";
+        for(let impIndex = 0; impIndex < this.improvementsChecked.length; impIndex++)
+        {
+            returnString += `${this.improvementsChecked[impIndex]} ${this.improvementsText[impIndex]}\n\n`;
+        }
+        returnString += "\n---\nADVANCED IMPROVEMENTS\n";
+        for(let advIndex = 0; advIndex < this.advancedChecked.length; advIndex++)
+        {
+            returnString += `${this.advancedChecked[advIndex]} ${this.advancedText[advIndex]}\n\n`;
+        }
+        returnString += "\n---\nCORRUPTION\n";
+        for(let corruptionIndex = 0; corruptionIndex < this.corruptionChecked.length; corruptionIndex++)
+        {
+            returnString += `${this.corruptionChecked[corruptionIndex]} ${this.corruptionText[corruptionIndex]}\n\n`;
+        }
         return returnString;
     }
     toEmbed()
     {
         let stats = `Blood: ${this.blood}\nHeart: ${this.heart}\nMind: ${this.mind}\nSpirit: ${this.spirit}`;
         let circles = `Mortalis: ${this.mortalis}\nNight: ${this.night}\nWild: ${this.wild}\nPower: ${this.power}`;
-        let improvements = this.improvements;
-        let advanced = this.advanced
-        let moves = this.moves.join('\n');
-        let helpText = ""
-        let description = stats + '\n' + harm + '\n' + luck + '\n' + xp;
+        let description = " ";
         let embed = new EmbedBuilder().setTitle(`**The ${this.Playbook()} — ${this.alias}**`).setDescription(description);
-        for(let move = 0; move < this.moves.length; move++)
+        embed.addFields({name: "Stats", value: stats, inline: true});
+        embed.addFields({name: "Circles", value: circles, inline: true});
+        for(let move = 0; move < this.moveNames.length; move++)
         {
-            embed.addFields({name: this.moves[move].split('\n')[0], value: this.moves[move].split('\n').splice(1).join('\n')});
+            embed.addFields({name: this.moveNames[move], value: this.moveTexts[move]});
         }
-        let improvementList = [];
-        let advancedList = [];
-        let emoji = '';
-        for(let improvement = 0; improvement < this.improvements.length; improvement++)
-        {
-            if(this.improvements[improvement][1])
-            {
-                emoji = xBox;
-            }
-            else
-            {
-                emoji = emptyBox;
-            }
-            improvementList.push(`${emoji} ${this.manifest[this.improvements[improvement][0]]}`);
-        }
-        for(let advanced = 0; advanced < this.advanced.length; advanced++)
-        {
-            if(this.advanced[advanced][1])
-            {
-                emoji = xBox;
-            }
-            else
-            {
-                emoji = emptyBox;
-            }
-            advancedList.push(`${emoji} ${this.manifest[this.advanced[advanced][0]]}`);
-        }
-
-        embed.addFields({name: '**Improvements**', value: improvementList.join('\n'), inline: true});
-        embed.addFields({name: '**Advanced**', value: advancedList.join('\n'), inline: true});
         return embed;        
-    }
-    PopulateImprovements()
-    {
-        let improvements = [];
-        let advanced = [];
-        let manifestKeys = Object.keys(this.manifest);
-        for(let itemIndex = 0; itemIndex < manifestKeys.length; itemIndex++)
-        {
-            if(manifestKeys[itemIndex].startsWith('improvement'))
-            {
-                if(Object.keys(this.fields).includes(manifestKeys[itemIndex]))
-                {
-                    improvements.push([manifestKeys[itemIndex], true]);
-                }
-                else
-                {
-                    improvements.push([manifestKeys[itemIndex], false]);
-                }
-            }
-            else if(manifestKeys[itemIndex].startsWith('advanced'))
-            {
-                if(Object.keys(this.fields).includes(manifestKeys[itemIndex]))
-                {
-                    advanced.push([manifestKeys[itemIndex], true]);
-                }
-                else
-                {
-                    advanced.push([manifestKeys[itemIndex], false]);
-                }
-            }
-        }
-        return [improvements, advanced];
-    }
-    Inventory()
-    {
-        if(fs.existsSync(`./Character Stuff/Inventories/${this.alias}.json`))
-        {
-            let inventoryFile = fs.readFileSync(`./Character Stuff/Inventories/${this.alias}.json`);
-            let inventory = JSON.parse(inventoryFile);
-            return inventory;
-            //return inventoryFile.split(',');
-        }
-        else
-        {
-            return [];
-        }
-    }
-    TakeHarm(harm)
-    {
-        this.harm += harm;
-        if(this.harm > 7)
-        {
-            this.harm = 7;
-        }
-        else if (this.harm < 0)
-        {
-            this.harm = 0;
-        }
-        this.UpdateFields();
-    }
-    MarkXP(xp)
-    {
-        this.xp += xp;
-        if(this.xp < 0)
-        {
-            this.xp = 0;
-        }
-        this.UpdateFields;
-    }
-    MarkLuck(luck)
-    {
-        this.luck += luck;
-        if(this.luck > 7)
-        {
-            this.luck = 7;
-        }
-        else if(this.luck < 0)
-        {
-            this.luck = 0;
-        }
-        this.UpdateFields();
-    }
-    UpdateFields()
-    {
-        // Harm
-        for(let harm = 0; harm < this.harm; harm++)
-        {
-            this.fields[`harm${harm}`] = '/Yes';
-        }
-        let harmFields = Object.keys(this.fields).filter(field => field.startsWith('harm'));
-        for(let harmField = 0; harmField < harmFields.length; harmField++)
-        {
-            if(~isNaN(harmFields[harmField].slice(-1)) && parseInt(harmFields[harmField].slice(-1)) >= this.harm)
-            {
-                delete(this.fields[harmFields[harmField]]);
-            }
-        }
-        // XP
-        for(let xp = 0; xp < this.xp; xp++)
-        {
-            this.fields[`xp${xp}`] = '/Yes';
-        }
-        let xpFields = Object.keys(this.fields).filter(field => field.startsWith('xp'));
-        for(let xpField = 0; xpField < xpFields.length; xpField++)
-        {
-            if(~isNaN(xpFields[xpField].slice(-1)) && parseInt(xpFields[xpField].slice(-1)) >= this.xp)
-            {
-                delete(this.fields[xpFields[xpField]]);
-            }
-        }
-        // Luck
-        for(let luck = 0; luck < this.luck; luck++)
-        {
-            this.fields[`luck${luck}`] = '/Yes';
-        }
-        let luckFields = Object.keys(this.fields).filter(field => field.startsWith('luck'));
-        for(let luckField = 0; luckField < luckFields.length; luckField++)
-        {
-            if(~isNaN(luckFields[luckField].slice(-1)) && parseInt(luckFields[luckField].slice(-1)) >= this.xp)
-            {
-                delete(this.fields[luckFields[luckField]]);
-            }
-        }
     }
     Save(directory = 'Demo Characters')
     {
-        this.UpdateFields();
-        let path = `./Character Stuff/${directory}`;
+        let path = `./${directory}`;
         fs.writeFileSync(`${path}/${this.alias}.json`, JSON.stringify(this, null, 2), 'utf8');
     }
     FromJSON(name = '', playbook = null, activeGame = 'Demo Characters')
     {
-        let directory = `./Character Stuff/${activeGame}/`;
+        let directory = `./${activeGame}/`;
         let manifestPath = './Character Stuff/Field Data/';
         if(fs.existsSync(`${directory}${name}.json`))
         {

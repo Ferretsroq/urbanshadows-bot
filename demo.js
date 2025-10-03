@@ -75,6 +75,6 @@ console.log(rows[test1[0]][test1[1]]);*/
 
 //await listMajors();
 
-const foo = new Character(JSON.parse(fs.readFileSync("awareManifest.json")), await listMajors(), "");
+const foo = new Character(JSON.parse(fs.readFileSync("awareManifest.json")), await listMajors(), "Foo");
 console.log(foo.toString());
 //console.log(foo);
