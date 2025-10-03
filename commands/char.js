@@ -13,10 +13,16 @@ module.exports =
 
 	async execute(interaction)
 	{
-        
-        const character = new Character(JSON.parse(fs.readFileSync("./awareManifest.json")), await getFields("The Aware"), "Foo");
+        const characterIDs = JSON.parse(fs.readFileSync('./characterIDs.json'));
+		const id = interaction.user.id;
+		const manifest = characterIDs[id]["manifest"];
+		const sheetName = characterIDs[id]["sheetName"];
+		const name = characterIDs[id]["name"];
+		const playbook = Character.PlaybookClass(characterIDs[id]["playbook"]);
+		
+        const character = new playbook(JSON.parse(fs.readFileSync(`./manifests/${manifest}.json`)), await getFields(sheetName), name);
 
 
-		await interaction.reply({embeds: [character.toEmbed()]});
+		await interaction.reply({embeds: [character.playbookEmbed()]});
 	},
 }

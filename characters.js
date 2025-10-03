@@ -13,9 +13,14 @@ class Character
     {
         this.alias = alias;
         this.manifest = manifest;
+        this.sheetFields = sheetFields;
         const moveChecked = Object.keys(manifest).filter(name => name.startsWith("move") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
         this.moveNames = Object.keys(manifest).filter(name => name.startsWith("move") && name.endsWith("Name")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
         this.moveTexts = Object.keys(manifest).filter(name => name.startsWith("move") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
+        const corruptionMoveChecked = Object.keys(manifest).filter(name => name.startsWith("corruptionMove") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
+        this.corruptionMoveNames = Object.keys(manifest).filter(name => name.startsWith("corruptionMove") && name.endsWith("Name")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
+        this.corruptionMoveTexts = Object.keys(manifest).filter(name => name.startsWith("corruptionMove") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
+
         const bloodCoordinates = Character.TransformCoordinates(manifest['blood']);
         this.blood = sheetFields[bloodCoordinates[0]][bloodCoordinates[1]];
         const heartCoordinates = Character.TransformCoordinates(manifest['heart']);
@@ -42,6 +47,8 @@ class Character
         this.corruptionChecked = Object.keys(manifest).filter(name => name.startsWith("corruptionImprovement") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).map(x => (x === "TRUE") ? xBox : emptyBox);
         this.corruptionText = Object.keys(manifest).filter(name => name.startsWith("corruptionImprovement") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
 
+        this.letItOut = sheetFields[Character.TransformCoordinates(manifest["letItOut0"])[0]][Character.TransformCoordinates(manifest["letItOut0"])[1]];
+        this.letItOut += '\n\n' + sheetFields[Character.TransformCoordinates(manifest["letItOut1"])[0]][Character.TransformCoordinates(manifest["letItOut1"])[1]];
         
     }
     Playbook()
@@ -123,6 +130,11 @@ class Character
         {
             embed.addFields({name: this.moveNames[move], value: this.moveTexts[move]});
         }
+        for(let corruptionMove = 0; corruptionMove < this.corruptionMoveNames.length; corruptionMove++)
+        {
+            embed.addFields({name: this.corruptionMoveNames[corruptionMove], value: this.corruptionMoveTexts[corruptionMove]})
+        }
+        embed.addFields({name: "Let It Out", value: this.letItOut});
         return embed;        
     }
     Save(directory = 'Demo Characters')
@@ -161,144 +173,77 @@ class Character
 
         return [rowPost, columnPost];
     }
+    static PlaybookClass(name)
+    {
+        if(name === "The Aware")
+        {
+            return Aware;
+        }
+        else if(name === "The Fae")
+        {
+            return Fae;
+        }
+    }
 
 }
 
-class Chosen extends Character
+class Aware extends Character
 {
     constructor(manifest, sheetFields, alias='')
     {
         super(manifest, sheetFields, alias);
-        this.moves.push(this.manifest['move5']);
-        this.moves.push(this.manifest['move6']);
-        this.weapon = this.SetWeapon();
-        this.playbook = 'Chosen';
+        this.playbook = 'Aware';
     }
     static Playbook()
     {
-        return 'Chosen';
-    }
-    SetWeapon()
-    {
-        let forms = Object.keys(this.fields).filter(field => field.startsWith('form'));
-        let form = '';
-        if(forms.length != 0)
-        {
-            form = forms[0];
-        }
-        let ends = Object.keys(this.fields).filter(field => field.startsWith('end')).slice(0,3);
-        let harm = 0;
-        let tags = [];
-        let name = '';
-        let endNames = [];
-        if(form == 'form0')
-        {
-            name = 'staff';
-            harm += 1;
-            tags.push('hand/close');
-        }
-        else if(form == 'form1')
-        {
-            name = 'haft';
-            harm += 2;
-            tags.push('hand');
-            tags.push('heavy');
-        }
-        else if(form == 'form2')
-        {
-            name = 'handle';
-            harm += 1;
-            tags.push('hand');
-            tags.push('balanced');
-        }
-        else if(form == 'form3')
-        {
-            name = 'chain';
-            harm += 1;
-            tags.push('hand');
-            tags.push('area');
-        }
-        if(ends.includes('end0'))
-        {
-            endNames.push('artifact');
-            tags.push('magic');
-        }
-        if(ends.includes('end1'))
-        {
-            endNames.push('spikes');
-            harm += 1;
-            tags.push('messy');
-        }
-        if(ends.includes('end2'))
-        {
-            endNames.push('blade');
-            harm += 1;
-        }
-        if(ends.includes('end3'))
-        {
-            endNames.push('heavy');
-            harm += 1;
-        }
-        if(ends.includes('end4'))
-        {
-            endNames.push('long');
-            tags.push('close');
-        }
-        if(ends.includes('end5'))
-        {
-            endNames.push('throwable');
-            tags.push('close');
-        }
-        if(ends.includes('end6'))
-        {
-            endNames.push('chain');
-            tags.push('area');
-        }
-        tags.push(`${harm}-harm`);
-        return `**${this.fields['material']} ${name}** form with ${endNames.join(', ')} (${tags.join(' ')})`;
+        return 'Aware';
     }
     playbookEmbed()
     {
         let embed = this.toEmbed();
-        embed.setTitle(`**The Chosen — ${this.alias}**`)
-        embed.addFields({name: '**Weapon**', value: this.weapon});
+        embed.setTitle(`**The Aware — ${this.alias}**`)
+        const relationshipsChecked = Object.keys(this.manifest).filter(name => name.startsWith("mortalRelationship") && Number.isInteger(parseInt(name.substr(-1)))).map(x => this.manifest[x]).map(x => this.sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
+        const relationshipsTexts = Object.keys(this.manifest).filter(name => name.startsWith("mortalRelationship") && name.endsWith("Text")).map(x => this.manifest[x]).map(x => this.sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => relationshipsChecked[index] === "TRUE");
+        console.log(relationshipsChecked);
+        let relationshipString = "";
+
+        for(let relationship = 0; relationship < relationshipsTexts.length; relationship++)
+        {
+            relationshipString += `${xBox} ${relationshipsTexts[relationship]}\n`
+        }
+        relationshipString += this.sheetFields[Character.TransformCoordinates(this.manifest["mortalRelationshipMove"])[0]][Character.TransformCoordinates(this.manifest["mortalRelationshipMove"])[1]];
+        embed.addFields({name: "Mortal Relationships", value: relationshipString});
+        embed.addFields({name: "Your Kit", value: this.sheetFields[Character.TransformCoordinates(this.manifest["kitMove"])[0]][Character.TransformCoordinates(this.manifest["kitMove"])[1]]});
+
         return embed;
     }
 }
 
-class Crooked extends Character
+class Fae extends Character
 {
    constructor(manifest, sheetFields, alias='')
     {
         super(manifest, sheetFields, alias)
-        this.heat = this.FillHeat()
-        this.underworld = this.manifest[Object.keys(this.fields).filter(field => field.startsWith('underworld'))[0]];
-        this.background = this.manifest[Object.keys(this.fields).filter(field => field.startsWith('background'))[0]];
-        this.playbook = 'Crooked';
+        this.playbook = 'Fae';
     }
     static Playbook()
     {
-        return 'Crooked';
-    }
-    FillHeat()
-    {
-        // Populate the heat based on what the player has input
-        let heatText = Object.keys(this.fields).filter(field => field.startsWith('heatText'));
-        let heats = Object.keys(this.fields).filter(field => field.startsWith('heat') && !field.startsWith('heatText'));
-        let returnHeat = ''
-        for(let heat = 0; heat < heats.length; heat++)
-        {
-            returnHeat += `${this.manifest[heats[heat]]}${this.fields[heatText[heat]]}\n`;
-        }
-        return returnHeat;
+        return 'Fae';
     }
     playbookEmbed()
     {
         let embed = this.toEmbed();
-        embed.setTitle(`**The Crooked — ${this.alias}**`);
-        embed.addFields({name: '**Heat**', value: this.heat});
-        embed.addFields({name: '**Underworld**', value: this.underworld});
-        embed.addFields({name: '**Background**', value: this.background});
+        embed.setTitle(`**The Fae — ${this.alias}**`);
+        const faerieMagicChecked = Object.keys(this.manifest).filter(name => name.startsWith("faerieMagic") && Number.isInteger(parseInt(name.substr(-1)))).map(x => this.manifest[x]).map(x => this.sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
+        const faerieMagicNames = Object.keys(this.manifest).filter(name => name.startsWith("faerieMagic") && name.endsWith("Name")).map(x => this.manifest[x]).map(x => this.sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => faerieMagicChecked[index] === "TRUE");
+        const faerieMagicTexts = Object.keys(this.manifest).filter(name => name.startsWith("faerieMagic") && name.endsWith("Text")).map(x => this.manifest[x]).map(x => this.sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => faerieMagicChecked[index] === "TRUE");
+
+        let faerieMagicString = "";
+        for(let faerieMagic = 0; faerieMagic < faerieMagicNames.length; faerieMagic++)
+        {
+            faerieMagicString += `* **${faerieMagicNames[faerieMagic]}**: ${faerieMagicTexts[faerieMagic]}\n`
+        }
+        embed.addFields({name: "Faerie Powers", value: faerieMagicString});
         return embed;
     }
 }
@@ -921,4 +866,4 @@ function PlaybookByName(name='Chosen')
 }
 
 
-module.exports = {Character, Chosen, Crooked, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged, Searcher, LoadCharacter, LoadAllCharactersFromJSON, PlaybookByName,DumpPDFToJSON};
+module.exports = {Character, Aware, Fae, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged, Searcher, LoadCharacter, LoadAllCharactersFromJSON, PlaybookByName,DumpPDFToJSON};
