@@ -1,6 +1,7 @@
 const {ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ButtonStyle, SelectMenuOptionBuilder, EmbedBuilder} = require('discord.js');
 fs = require('fs');
-
+const { ContainerBuilder, UserSelectMenuBuilder, MessageFlags } = require('discord.js');
+const {spreadsheetID} = require('./config.json');
 
 let emptyBox = String.fromCharCode(parseInt('2610', 16));
 let xBox = String.fromCharCode(parseInt('2612', 16));
@@ -9,11 +10,12 @@ const playbooks = ['Aware', 'Fae', 'Hunter', 'Immortal', 'Imp', 'Spectre', 'Swor
 
 class Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
         this.alias = alias;
         this.manifest = manifest;
         this.sheetFields = sheetFields;
+        this.gid = gid;
         const moveChecked = Object.keys(manifest).filter(name => name.startsWith("move") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
         this.moveNames = Object.keys(manifest).filter(name => name.startsWith("move") && name.endsWith("Name")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
         this.moveTexts = Object.keys(manifest).filter(name => name.startsWith("move") && name.endsWith("Text")).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]).filter((name, index) => moveChecked[index] === "TRUE");
@@ -87,7 +89,7 @@ class Character
         let returnString = "";
         for(let moveIndex = 0; moveIndex < this.moveNames.length; moveIndex++)
         {
-            returnString += this.moveNames[moveIndex]
+            returnString += `**${this.moveNames[moveIndex]}**`
             returnString += `\n${this.moveTexts[moveIndex]}\n\n`
         }
         return returnString;
@@ -136,6 +138,29 @@ class Character
         }
         embed.addFields({name: "Let It Out", value: this.letItOut});
         return embed;        
+    }
+    toComponent()
+    {
+        let stats = `Blood: ${this.blood}\nHeart: ${this.heart}\nMind: ${this.mind}\nSpirit: ${this.spirit}`;
+        let circles = `Mortalis: ${this.mortalis}\nNight: ${this.night}\nWild: ${this.wild}\nPower: ${this.power}`;
+        const statActionRow = new ActionRowBuilder()
+        const circleActionRow = new ActionRowBuilder()
+        for(let stat of ['Blood', 'Heart', 'Mind', 'Spirit'])
+        {
+            statActionRow.addComponents(new ButtonBuilder().setCustomId(`rollStat${stat}`).setLabel(`${stat}: ${this[stat.toLowerCase()]}`).setStyle(ButtonStyle.Primary));
+        }
+        for(let stat of ['Mortalis', 'Night', 'Wild', 'Power'])
+        {
+            circleActionRow.addComponents(new ButtonBuilder().setCustomId(`rollStat${stat}`).setLabel(`${stat}: ${this[stat.toLowerCase()]}`).setStyle(ButtonStyle.Primary));
+        }
+        const container = new ContainerBuilder()
+        .addTextDisplayComponents((textDisplay) => textDisplay.setContent(`# [${this.alias} — The ${this.playbook}](https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit?gid=${this.gid})`))
+        .addActionRowComponents([statActionRow, circleActionRow])
+        .addSeparatorComponents((separator) => separator)
+        .addTextDisplayComponents((textDisplay) => textDisplay.setContent(this.FormatMoves()))
+        .addSeparatorComponents((separator) => separator)
+        .addTextDisplayComponents((textDisplay) => textDisplay.setContent(`When you **Let It Out**, you can:\n${this.letItOut}`));
+        return container;
     }
     Save(directory = 'Demo Characters')
     {
@@ -189,14 +214,19 @@ class Character
 
 class Aware extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
+        super(manifest, sheetFields, alias, gid);
         this.playbook = 'Aware';
     }
     static Playbook()
     {
         return 'Aware';
+    }
+    playbookComponent()
+    {
+        let component = this.toComponent();
+        return component;
     }
     playbookEmbed()
     {
@@ -221,9 +251,9 @@ class Aware extends Character
 
 class Fae extends Character
 {
-   constructor(manifest, sheetFields, alias='')
+   constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias)
+        super(manifest, sheetFields, alias, gid)
         this.playbook = 'Fae';
     }
     static Playbook()

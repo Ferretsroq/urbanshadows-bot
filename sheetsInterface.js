@@ -2,6 +2,7 @@ import path from 'node:path';
 import process from 'node:process';
 import {authenticate} from '@google-cloud/local-auth';
 import {google} from 'googleapis';
+import config from './config.json' with { type: "json" };
 
 // The scope for reading spreadsheets.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
@@ -20,7 +21,7 @@ async function getFields(sheetName) {
   const sheets = google.sheets({version: 'v4', auth: auth});
   // Get the values from the spreadsheet.
   const result = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1fyNsFujj6BAK-TBVHFx2Bqt2KTtGnV4RBYwfAuaslKc',
+    spreadsheetId: config.spreadsheetID,
     range: sheetName,
   });
   const rows = result.data.values;

@@ -1,9 +1,10 @@
 {
     "111529517541036032":
     {
-        "sheetName": "The Fae",
-        "manifest": "faeManifest",
-        "name": "Foo",
-        "playbook": "The Fae"
+        "sheetName": "The Aware",
+        "manifest": "awareManifest",
+        "name": "Felicity",
+        "playbook": "The Aware",
+        "gid": "367716689"
     }
 }
