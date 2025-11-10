@@ -52,6 +52,8 @@ class Character
         this.letItOut = sheetFields[Character.TransformCoordinates(manifest["letItOut0"])[0]][Character.TransformCoordinates(manifest["letItOut0"])[1]];
         this.letItOut += '\n\n' + sheetFields[Character.TransformCoordinates(manifest["letItOut1"])[0]][Character.TransformCoordinates(manifest["letItOut1"])[1]];
         
+        this.debtsOwed = Object.keys(manifest).filter(name => name.startsWith("debtsOwed") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
+        this.debtsToCollect = Object.keys(manifest).filter(name => name.startsWith("debtsToCollect") && Number.isInteger(parseInt(name.substr(-1)))).map(x => manifest[x]).map(x => sheetFields[Character.TransformCoordinates(x)[0]][Character.TransformCoordinates(x)[1]]);
     }
     Playbook()
     {
