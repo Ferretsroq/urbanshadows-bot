@@ -54,6 +54,11 @@ module.exports =
         {
             digestData[interaction.customId].players.push(name);
         }
+        else
+        {
+            const index = digestData[interaction.customId].players.indexOf(name);
+            digestData[interaction.customId].players.splice(index, 1);
+        }
         fs.writeFileSync('./digests/0.json', JSON.stringify(digestData, null, 2));
         digestData = JSON.parse(fs.readFileSync('./digests/0.json', 'utf8'));
 

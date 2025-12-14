@@ -210,6 +210,50 @@ class Character
         {
             return Fae;
         }
+        else if(name === "The Hunter")
+        {
+            return Hunter;
+        }
+        else if(name === "The Immortal")
+        {
+            return Immortal;
+        }
+        else if(name === "The Imp")
+        {
+            return Imp;
+        }
+        else if(name === "The Oracle")
+        {
+            return Oracle;
+        }
+        else if(name === "The Spectre")
+        {
+            return Spectre;
+        }
+        else if(name === "The Sworn")
+        {
+            return Sworn;
+        }
+        else if(name === "The Tainted")
+        {
+            return Tainted;
+        }
+        else if(name === "The Vamp")
+        {
+            return Vamp;
+        }
+        else if(name === "The Veteran")
+        {
+            return Veteran;
+        }
+        else if(name === "The Wizard")
+        {
+            return Wizard;
+        }
+        else if(name === "The Wolf")
+        {
+            return Wolf;
+        }
     }
 
 }
@@ -280,622 +324,149 @@ class Fae extends Character
     }
 }
 
-class Divine extends Character
+class Hunter extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.mission = this.manifest[Object.keys(field).filter(field => field.startsWith('mission'))[0]];
-        this.weapon = this.manifest[Object.keys(field).filter(field => field.startsWith('gear'))[0]];
-        this.playbook = 'Divine';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Hunter';
     }
     static Playbook()
     {
-        return 'Divine';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Divine — ${this.alias}**`);
-        embed.addFields({name: '**Mission**', value: this.mission});
-        embed.addFields({name: '**Weapon**', value: this.weapon});
-        return embed;
+        return 'Hunter'
     }
 }
 
-class Expert extends Character
+class Immortal extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        let havenFields = Object.keys(this.fields).filter(field => field.startsWith('haven'));
-        this.haven = [];
-        for(let field = 0; field < havenFields.length; field++)
-        {
-            this.haven.push(this.manifest[havenFields[field]]);
-        }
-        this.playbook = 'Expert';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Immortal';
     }
     static Playbook()
     {
-        return 'Expert';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Expert — ${this.alias}**`);
-        embed.addFields({name: '**Haven**', value: this.haven.join('\n')});
-        return embed;
+        return 'Immortal'
     }
 }
-
-class Flake extends Character
+class Imp extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.playbook = 'Flake';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Imp';
     }
     static Playbook()
     {
-        return 'Flake';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Flake — ${this.alias}**`);
-        return embed;
+        return 'Imp'
     }
 }
 
-class Initiate extends Character
+class Oracle extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        let goodFields = Object.keys(this.fields).filter(field => field.startsWith('good'));
-        let badFields = Object.keys(this.fields).filter(field => field.startsWith('bad'));
-        this.good = [];
-        this.bad = [];
-        for(let good = 0; good < goodFields.length; good++)
-        {
-            this.good.push(this.manifest[goodFields[good]]);
-        }
-        for(let bad = 0; bad < badFields.length; bad++)
-        {
-            this.bad.push(this.manifest[badFields[bad]]);
-        }
-        this.playbook = 'Initiate';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Oracle';
     }
     static Playbook()
     {
-        return 'Initiate';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Initiate — ${this.alias}**`);
-        embed.addFields({name: '**Order Good Traits**', value: this.good.join('\n'), inline: true});
-        embed.addFields({name: '**Order Bad Traits**', value: this.bad.join('\n'), inline: true});
-        return embed;
+        return 'Oracle'
     }
 }
 
-class Monstrous extends Character
+class Spectre extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.attacks = this.NaturalAttack()
-        this.curse = this.manifest[Object.keys(this.fields).filter(field => field.startsWith('curse'))[0]];
-        this.playbook = 'Monstrous';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Spectre';
     }
     static Playbook()
     {
-        return 'Monstrous';
-    }
-    NaturalAttack()
-    {
-        let bases = Object.keys(this.fields).filter(field => field.startsWith('base'));
-        let extras = Object.keys(this.fields).filter(field => field.startsWith('extra'));
-        let attacks = [];
-        for(let base = 0; base < bases.length; base++)
-        {
-            let baseName = '';
-            let baseHarm = 0;
-            let baseTags = [];
-            if(bases[base] == 'base0')
-            {
-                baseName = 'Teeth';
-                baseHarm = 3;
-                baseTags.push('intimate');
-            }
-            else if(bases[base] == 'base1')
-            {
-                baseName = 'Claws';
-                baseHarm = 2;
-                baseTags.push('hand');
-            }
-            else if(bases[base] == 'base2')
-            {
-                baseName = 'Magical Force';
-                baseHarm = 1;
-                baseTags.push('magical');
-                baseTags.push('close');
-            }
-            else if(bases[base] == 'base3')
-            {
-                baseName = 'Life-Drain';
-                baseHarm = 1;
-                baseTags.push('intimate');
-                baseTags.push('life-drain');
-            }
-            // Instead of extras applying to one base, apply to all bases
-            // This is against the rules but way easier to manage automatically
-            for(let extra = 0; extra < extras.length; extra++)
-            {
-                if(extras[extra] == 'extra0')
-                {
-                    baseHarm += 1;
-                }
-                else if(extrax[extra] == 'extra1')
-                {
-                    baseTags.push('ignore-armour');
-                }
-                else if(extras[extra] == 'extra2')
-                {
-                    baseTags.push('close');
-                }
-            }
-            attacks.push(new MonstrousAttack(baseName, baseHarm, baseTags));
-        }
-        return attacks;
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Monstrous — ${this.alias}**`);
-        embed.addFields({name: '**Curse**', value: this.curse});
-        let attacks = '';
-        for(let attack = 0; attack < this.attacks.length; attack++)
-        {
-            attacks += this.attacks[attack].toString()+'\n';
-        }
-        embed.addFields({name: '**Attacks**', value: attacks});
-        return embed;
-    }
-}
-class MonstrousAttack
-{
-    constructor(base='', harm=0, tags=[])
-    {
-        this.base = base;
-        this.harm = harm;
-        this.tags = tags;
-    }
-    toString()
-    {
-        return `Base: ${this.base} (${this.harm}-harm ${this.tags.join(' ')})`;
+        return 'Spectre'
     }
 }
 
-class Mundane extends Character
+class Sworn extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.playbook = 'Mundane';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Sworn';
     }
     static Playbook()
     {
-        return 'Mundane'
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Mundane — ${this.alias}**`);
-        return embed;
+        return 'Sworn'
     }
 }
 
-class Professional extends Character
+class Tainted extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        let resourceFields = Object.keys(this.fields).filter(field => field.startsWith('resource'));
-        let redTapeFields = Object.keys(this.fields).filter(field => field.startsWith('redtape'));
-        this.resources = [];
-        this.redtape = [];
-        for(let resource = 0; resource < resourceFields.length; resource++)
-        {
-            this.resources.push(this.manifest[resourceFields[resource]]);
-        }
-        for(let redtape = 0; redtape < redTapeFields.length; redtape++)
-        {
-            this.redtape.push(this.manifest[redTapeFields[redtape]]);
-        }
-        this.moves.push(this.manifest['move7']);
-        this.playbook = 'Professional';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Tainted';
     }
     static Playbook()
     {
-        return 'Professional';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Professional — ${this.alias}**`);
-        embed.addFields({name: '**Resources**', value: this.resources.join('\n'), inline: false});
-        embed.addFields({name: '**Redtape**', value: this.redtape.join('\n'), inline: true});
-        return embed;
+        return 'Tainted'
     }
 }
 
-class SpellSlinger extends Character
+class Vamp extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.techniques = this.Techniques();
-        this.combatMagic = this.CombatMagic();
-        this.playbook = 'Spell-Slinger';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Vamp';
     }
     static Playbook()
     {
-        return 'Spell-Slinger'
-    }
-    Techniques()
-    {
-        // Check the 3 that you do use, leave the one you don't need blank
-        let techniqueFields = Object.keys(this.fields).filter(field => field.startsWith('technique'));
-        let techniques = [];
-        for(let technique = 0; technique < techniqueFields.length; technique++)
-        {
-            techniques.push(this.manifest[techniqueFields[technique]]);
-        }
-        return techniques;
-    }
-    CombatMagic()
-    {
-        let bases = Object.keys(this.fields).filter(field => field.startsWith('base'));
-        let effects = Object.keys(this.fields).filter(field => field.startsWith('effect'));
-        let spells = [];
-        for(let base = 0; base < bases.length; base++)
-        {
-            let baseName = ''
-            let baseHarm = 0
-            let baseTags = []
-            let spellEffects = []
-            if(bases[base] == 'base0')
-            {
-                baseName = 'Blast';
-                baseHarm = 2;
-                baseTags = ['Magic', 'Close', 'Obvious', 'Loud'];
-            }
-            else if(bases[base] == 'base1')
-            {
-                baseName = 'Ball';
-                baseHarm = 1;
-                baseTags = ['Magic', 'Area', 'Close', 'Obvious', 'Loud'];
-            }
-            else if(bases[base] == 'base2')
-            {
-                baseName = 'Missile';
-                baseHarm = 1;
-                baseTags = ['Magic', 'Far', 'Obvious', 'Loud'];
-            }
-            else if(bases[base] == 'base3')
-            {
-                baseName = 'Wall';
-                baseHarm = 1;
-                baseTags = ['Magic', 'Barrier', 'Close', '1-Armour', 'Obvious', 'Loud'];
-            }
-            for(let effect = 0; effect < effects.length; effect++)
-            {
-                if(effects[effect] == 'effect0')
-                {
-                    spellEffects.push('Fire');
-                    baseHarm += 2;
-                    baseTags.push('Fire');
-                    baseTags.push('[if you get a 10+ on a combat magic roll, the fire won\'t spread.]');
-                }
-                else if(effects[effect] == 'effect1')
-                {
-                    spellEffects.push('Force/Wind');
-                    baseHarm += 1;
-                    baseTags.push('Forceful');
-                    if(baseName == 'Wall')
-                    {
-                        baseTags.push('+1 Armour');
-                    }
-                }
-                else if(effects[effect] == 'effect2')
-                {
-                    spellEffects.push('Lightning/Entropy');
-                    baseHarm += 1;
-                    baseTags.push('messy');
-                }
-                else if(effects[effect] == 'effect3')
-                {
-                    spellEffects.push('Frost/Ice');
-                    if(baseName == 'Wall')
-                    {
-                        baseHarm -= 1;
-                        baseTags.push('+2 Armour');
-                    }
-                    else
-                    {
-                        baseHarm += 1;
-                        baseTags.push('Restraining');
-                    }
-                }
-                else if(effects[effect] == 'effect4')
-                {
-                    spellEffects.push('Earth');
-                    baseTags.push('Forceful');
-                    baseTags.push('Restraining');
-                }
-                else if(effects[effect] == 'effect5')
-                {
-                    spellEffects.push('Necromantic');
-                    baseTags.push('Life-Drain');
-                }
-            }
-            spells.push(new CombatSpell(baseName, spellEffects, baseHarm, baseTags));
-        }
-        return spells;
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Spell-Slinger — ${this.alias}**`);
-        let spells = [];
-        for(let spell = 0; spell < this.combatMagic; spell++)
-        {
-            spells.push(this.combatMagic[spell].toString());
-        }
-        embed.addFields({name: '**Techniques**', value: this.techniques.join('\n'), inline: true});
-        embed.addFields({name: '**Combat Magic**', value: spells.join('\n'), inline: true});
-        return embed;
+        return 'Vamp'
     }
 }
 
-class CombatSpell
+class Veteran extends Character
 {
-    constructor(base='', effects=[], harm=0, tags=[])
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        this.base = base;
-        this.harm = harm;
-        this.tags = tags;
-        this.effects = effects;
-    }
-    toString()
-    {
-        return `Base: ${this.base} (${this.effects.join(', ')}) (${this.harm}-harm ${this.tags.join(' ')})`;
-    }
-}
-
-class Spooky extends Character
-{
-    constructor(manifest, sheetFields, alias='')
-    {
-        super(manifest, sheetFields, alias);
-        let darksideFields = Object.keys(this.fields).filter(field => field.startsWith('darkside'));
-        this.darkside = [];
-        for(let field = 0; field < darksideFields.length; field++)
-        {
-            this.darkside.push(this.manifest[darksideFields[field]]);
-        }
-        this.playbook = 'Spooky';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Veteran';
     }
     static Playbook()
     {
-        return 'Spooky';
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Spooky — ${this.alias}**`);
-        embed.addFields({name: '**Dark Side**', value: this.darkside.join('\n')});
-        return embed;
+        return 'Veteran'
     }
 }
 
-class Wronged extends Character
+class Wizard extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        this.lost = this.Loss();
-        this.prey = this.fields['prey'];
-        let guiltFields = Object.keys(this.fields).filter(field => field.startsWith('save'));
-        this.guilt = [];
-        for(let guilt = 0; guilt < guiltFields.length; guilt++)
-        {
-            this.guilt.push(this.manifest[guiltFields[guilt]]);
-        }
-        let weaponFields = Object.keys(this.fields).filter(field => field.startsWith('signature'));
-        this.signatureWeapon = [];
-        for(let weapon = 0; weapon < weaponFields.length; weapon++)
-        {
-            this.signatureWeapon.push(this.manifest[weaponFields[weapon]]);
-        }
-        this.playbook = 'Wronged';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Wizard';
     }
     static Playbook()
     {
-        return 'Wronged';
-    }
-    Loss()
-    {
-        let lossFields = Object.keys(this.fields).filter(field => field.startsWith('lost') && !field.startsWith('lostText'));
-        let lossTextFields = Object.keys(this.fields).filter(field => field.startsWith('lostText'));
-        let yourLosses = [];
-        if(lossFields.length == lossTextFields.length)
-        {
-            for(let loss = 0; loss < lossFields.length; loss++)
-            {
-                yourLosses.push(`${this.manifest[lossFields[loss]]}, ${this.fields[lossTextFields[loss]]}`);
-            }
-        }
-        else
-        {
-            yourLosses = ['I think you filled this out wrong.'];
-        }
-        return yourLosses;
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Wronged — ${this.alias}**`);
-        embed.addFields({name: '**Signature Weapon**', value: this.signatureWeapon.join('\n')});
-        embed.addFields({name: '**Guilt**', value: this.guilt.join('\n')});
-        return embed;
+        return 'Wizard'
     }
 }
 
-class Searcher extends Character
+class Wolf extends Character
 {
-    constructor(manifest, sheetFields, alias='')
+    constructor(manifest, sheetFields, alias='', gid)
     {
-        super(manifest, sheetFields, alias);
-        let encounterFields = Object.keys(this.fields).filter(field => field.startsWith('firstencounter'));
-        this.firstEncounter = [this.manifest['firstEncounter0']];
-        for(let field = 0; field < encounterFields.length; field++)
-        {
-            this.firstEncounter.push(this.manifest[encounterFields[field]]);
-        }
-        this.playbook = 'Searcher';
+        super(manifest, sheetFields, alias, gid)
+        this.playbook = 'Wolf';
     }
     static Playbook()
     {
-        return 'Searcher'
-    }
-    playbookEmbed()
-    {
-        let embed = this.toEmbed();
-        embed.setTitle(`**The Searcher — ${this.alias}**`);
-        embed.addFields({name: '**First Encounter**', value: this.firstEncounter[1]});
-        return embed;
+        return 'Wolf'
     }
 }
 
 
-function LoadAllCharacters(playerCharacters=[], activeGame='Demo Characters')
-{
-    let playbookClasses =  [Chosen, Crooked, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged];
-    let characters = {};
-    for(let playbook = 0; playbook < playbookClasses.length; playbook++)
-    {
-        [data, fields] = LoadCharacter(playbookClasses[playbook].Playbook());
-        let character = playbook(data, fields, alias=playbook.Playbook());
-        characters[playbook.Playbook()] = character;
-    }
-    for(let playerCharacter = 0; playerCharacter < playerCharacters.length; playerCharacter++)
-    {
-        [data, fields] = LoadCharacter(playbook=playerCharacters[playerCharacter][1].Playbook(), sheetPath=`./Character Stuff/${activeGame}`, name=playerCharacters[playerCharacter][0]);
-        let character = playerCharacters[playerCharacter][1](data, fields, alias=playerCharacters[playerCharacter][0]);
-        characters[playerCharacters[playerCharacter][0]] = character;
-    }
-    return characters;
-}
-
-function LoadAllCharactersFromJSON(playerCharacters=[], activeGame='Demo Characters')
-{
-    let playbookClasses = [Chosen, Crooked, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged, Searcher];
-    let characters = {};
-    for(let playbook = 0; playbook < playbookClasses.length; playbook++)
-    {
-        if(fs.existsSync(`./Character Stuff/${activeGame}/${playbookClasses[playbook].Playbook()}.json`))
-        {
-            let manifestFile = fs.readFileSync(`./Character Stuff/Field Data/${playbookClasses[playbook].Playbook()} Fields.json`);
-            let manifest = JSON.parse(manifestFile);
-            let fieldsFile = fs.readFileSync(`./Character Stuff/${activeGame}/${playbookClasses[playbook].Playbook()}.json`);
-            let fields = JSON.parse(fieldsFile);
-            characters[playbookClasses[playbook].Playbook()] = playbookClasses[playbook](manifest, fields, alias=playbookClasses[playbook].Playbook());
-        }
-    }
-    for(let playerCharacter = 0; playerCharacter < playerCharacters.length; playerCharacter++)
-    {
-        console.log(playerCharacters[playerCharacter][0]);
-        if(fs.existsSync(`./Character Stuff/${activeGame}/${playerCharacters[playerCharacter][0]}.json`))
-        {
-            let playbook = playerCharacters[playerCharacter][1];
-            let name = playerCharacters[playerCharacter][0];
-            console.log(name);
-            let manifestFile = fs.readFileSync(`./Character Stuff/Field Data/${playbook.Playbook()} Fields.json`);
-            let manifest = JSON.parse(manifestFile);
-            let fieldsFile = fs.readFileSync(`./Character Stuff/${activeGame}/${name}.json`);
-            let fields = JSON.parse(fieldsFile);
-            characters[name] = new playbook(manifest, fields, alias=name);
-        }
-    }
-    return characters;
-}
 
 
-async function DumpPDFToJSON(directory = 'Demo Characters', name='Chosen', playbook=Chosen)
-{
-    let path = `./Character Stuff/${directory}/`;
-    [data, fields] = await LoadCharacter(playbook.Playbook(), sheetPath=path, name=name);
-    let character = new playbook(data, fields);
-    character.Save();
-    return character;
-}
-
-
-async function LoadCharacter(playbook='Chosen', sheetPath='./Character Stuff/Demo Characters/', name=null)
-{
-    let fieldPath = './Character stuff/Field Data/';
-    if(name == null)
-    {
-        name = `The_${playbook}`;
-    }
-    let pdfFileObj = fs.readFileSync(`${sheetPath}${name}.pdf`);
-    const pdfDoc = await PDFDocument.load(pdfFileObj);
-    const form = pdfDoc.getForm();
-    const fields = form.getFields();
-    let blankBoxes = [];
-    let returnFields = {'fields': {}};
-
-    for(let field = 0; field < fields.length; field++)
-    {
-        if(fields[field].constructor.name == 'PDFCheckBox' && !fields[field].isChecked())
-        {
-            blankBoxes.push(fields[field].getName());
-        }
-    }
-    for(let field = 0; field < fields.length; field++)
-    {
-        if(!blankBoxes.includes(fields[field].getName()))
-        {
-            if(fields[field].constructor.name == 'PDFCheckBox')
-            {
-                returnFields['fields'][fields[field].getName()] = fields[field].getName();   
-            }
-            else if(fields[field].constructor.name == 'PDFTextField')
-            {
-                returnFields['fields'][fields[field].getName()] = fields[field].getText();
-            }
-        }
-    }
-    let fieldData = fs.readFileSync(`${fieldPath}${playbook} Fields.json`);
-    let data = JSON.parse(fieldData);
-    return [data, returnFields];
-}
-
-function PlaybookByName(name='Chosen')
-{
-    let playbooks = [Chosen, Crooked, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged, Searcher];
-    for(let playbook = 0; playbook < playbooks.length; playbook++)
-    {
-        if(playbooks[playbook].Playbook() == name)
-        {
-            return playbooks[playbook];
-        }
-    }
-}
-
-
-module.exports = {Character, Aware, Fae, Divine, Expert, Flake, Initiate, Monstrous, Mundane, Professional, SpellSlinger, Spooky, Wronged, Searcher, LoadCharacter, LoadAllCharactersFromJSON, PlaybookByName,DumpPDFToJSON};
+module.exports = {Character, Aware, Fae, Hunter, Immortal, Imp, Oracle, Spectre, Sworn, Tainted, Vamp, Veteran, Wizard, Wolf};

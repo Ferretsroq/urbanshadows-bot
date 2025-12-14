@@ -59,7 +59,7 @@ module.exports =
 		const roll0 = Math.floor(Math.random()*6)+1;
 		const roll1 = Math.floor(Math.random()*6)+1;
         const result = roll0 + roll1 + parseInt(character[stat]);
-		await interaction.update({content: `${roll0}+${roll1}+${character[stat]} = **${result}**`, components: []});
+		await interaction.update({content: `Rolling with stat **${stat}**\n${roll0}+${roll1}+${character[stat]} = **${result}**`, components: []});
 
 		
 	},

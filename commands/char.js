@@ -41,7 +41,9 @@ module.exports =
 	},
 	async Roll(interaction, character)
 	{
+		console.log('Rolling stat');
         const stat = interaction.customId.split('rollStat')[1].toLowerCase();
+		console.log(stat);
 		const roll0 = Math.floor(Math.random()*6)+1;
 		const roll1 = Math.floor(Math.random()*6)+1;
         const result = roll0 + roll1 + parseInt(character[stat]);

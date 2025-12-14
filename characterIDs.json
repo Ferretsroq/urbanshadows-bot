@@ -1,10 +1,43 @@
 {
     "111529517541036032":
     {
-        "sheetName": "The Aware",
-        "manifest": "awareManifest",
-        "name": "Felicity",
-        "playbook": "The Aware",
-        "gid": "367716689"
+        "sheetName": "Sable (The Hunter)",
+        "manifest": "hunterManifest",
+        "name": "Sable",
+        "playbook": "The Hunter",
+        "gid": "958609116"
+    },
+    "287370784568246272":
+    {
+        "sheetName": "The Fae",
+        "manifest": "faeManifest",
+        "name": "Rebecca's Character",
+        "playbook": "The Fae",
+        "gid": "436904765"
+    },
+    "143850769563516928":
+    {
+        "sheetName": "Sable (The Hunter)",
+        "manifest": "hunterManifest",
+        "name": "Sable",
+        "playbook": "The Hunter",
+        "gid": "958609116"
+    },
+    "379234429865820164":
+    {
+        "sheetName": "Partial (the Oracle)",
+        "manifest": "oracleManifest",
+        "name": "Partial",
+        "playbook": "The Oracle",
+        "gid": "1153694014"
+    },
+    "225734302099308545":
+    {
+        "sheetName": "Johnny [The Spectre]",
+        "manifest": "spectreManifest",
+        "name": "Johnny",
+        "playbook": "The Spectre",
+        "gid": "1525679246"
     }
+
 }
